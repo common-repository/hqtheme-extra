@@ -1,0 +1,61 @@
+/* Example CODE */
+$repeater_fields = [];
+$repeater_fields[] = \HQLib\Field::mk('input', "address", 'Address')
+       ->set_classes('hqt-col-1-2 hqt-col-3-4__sm')
+       ->disable_label()
+       ->set_input_addon(['prepend' => 'Address']);
+$repeater_fields[] = \HQLib\Field::mk('checkbox', "location_checkbox", 'Custom Switch')
+       ->set_classes('align-items-center hqt-col-1-2 hqt-col-1-4__sm')
+       ->set_args(['switch' => true]);
+$repeater_fields[] = \HQLib\Field::mk('select2', 'page', 'Page')
+       ->set_classes('hqt-col-1-1')
+       ->set_options([
+           'page-1' => 'Page #1',
+           'page-2' => 'Page #2',
+           'page-3' => 'Page #3',
+           'page-4' => 'Page #4',
+       ])
+       //->set_attributes(['data-ajax' => true, 'data-options-type' => 'post', 'data-object-type' => 'page'])
+       ->set_multiple()
+       //->set_conditions([['field' => 'main', 'value' => 'singular'], ['field' => 'singular', 'value' => 'post__page']])
+       ->set_placeholder('Select Pages');
+$repeater_fields[] = \HQLib\Field::mk('select2', 'page-2', 'Related to Page #2')
+       ->set_classes('hqt-col-1-1')
+       ->set_attributes(['data-ajax' => true, 'data-options-type' => 'post', 'data-object-type' => 'page'])
+       ->set_multiple()
+       ->set_conditions([['compare' => 'INCLUDES', 'field' => 'post_location.page', 'value' => 'page-2']])
+       ->set_placeholder('Select Pages');
+
+$repeater = \HQLib\Options\Repeater::mk('location')->add_field($repeater_fields);
+
+
+// POST META
+$meta_container = new Meta\Post('test-meta', 'Test Meta', 'Test Meta Descr', ['post', 'page']);
+$meta_container->add_field(Field::mk('select', 'field-id', 'F title')->set_options(
+                       [
+                           'as' => 'as',
+                           'as2' => 'as2',
+       ]))
+       ->add_field(Field::mk('repeater', 'post_location', 'HQLib Repeater')->set_repeater($repeater));
+
+
+// TERM META
+\HQLib\Meta\Term::mk('test-term-settings', 'Test Settings', '', ['category', 'post_tag'])
+       ->add_field(\HQLib\Field::mk('select', 'test_settings_field_1', 'Field #1')
+               ->set_options(['opt1' => 'Option 1', 'opt2' => 'Option 2']))
+       ->add_field(\HQLib\Field::mk('select', 'test_settings_field_2', 'Field #2')
+               ->set_options(['opt1' => 'Option 1', 'opt2' => 'Option 2']));
+
+// GENERAL OPTIONS
+$options_container = new Options\Container('main-options', 'Main Options');
+$options_container->set_is_grouped(true);
+$options_container->add_field(Field::mk('select', 'field-id', 'F title')->set_options(
+               [
+                   'as1' => 'as1',
+                   'as12' => 'as12',
+]));
+$options_container->add_field(Field::mk('select', 'field-id33', 'F title 33')->set_options(
+               [
+                   'as33' => 'as33',
+                   'as332' => 'as332',
+]));
